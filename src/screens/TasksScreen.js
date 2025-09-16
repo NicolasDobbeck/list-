@@ -1,16 +1,26 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, StyleSheet, FlatList, Alert, Platform } from 'react-native';
-import { List, FAB, Portal, Dialog, Button, TextInput, Text, ActivityIndicator, useTheme } from 'react-native-paper';
+import React, { useState, useEffect, useContext, useLayoutEffect } from 'react';
+import { View, StyleSheet, FlatList, Platform } from 'react-native';
+import {
+  List,
+  FAB,
+  Portal,
+  Dialog,
+  Button,
+  TextInput,
+  Text,
+  ActivityIndicator,
+  useTheme,
+} from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { auth } from '../config/firebase';
 import { onTasksRealtime, addTask, updateTask, deleteTask } from '../services/firestore';
 import { logout } from '../services/auth';
 import { useMotivationalQuote } from '../hooks/useMotivationalQuote';
-import ThemeContext from '../context/ThemeContext';
+import { ThemeContext } from '../context/ThemeContext';
 import I18nContext from '../context/I18nContext';
 import { scheduleTaskNotification } from '../services/notifications';
 
-export default function TasksScreen() {
+export default function TasksScreen({ navigation }) {
   const paperTheme = useTheme();
   const { toggleTheme } = useContext(ThemeContext);
   const { i18n, locale, setAppLocale } = useContext(I18nContext);
@@ -22,11 +32,13 @@ export default function TasksScreen() {
   const [taskDescription, setTaskDescription] = useState('');
   const [dueDate, setDueDate] = useState(new Date());
   const [editingTask, setEditingTask] = useState(null);
-  const [showDatePicker, setShowDatePicker] = useState(false); 
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const user = auth.currentUser;
-  
-  const { data: quote, isLoading: isQuoteLoading, isError: isQuoteError } = useMotivationalQuote();
+
+  const { data: quote, isLoading: isQuoteLoading, isError: isQuoteError } =
+    useMotivationalQuote();
+
 
   useEffect(() => {
     if (user) {
@@ -37,37 +49,39 @@ export default function TasksScreen() {
     }
   }, [user]);
 
-  const handleAddTask = async () => {
-    if (!taskTitle) {
-      Alert.alert('Erro', 'O título da tarefa é obrigatório.');
-      return;
-    }
-    const taskData = {
-      title: taskTitle,
-      description: taskDescription,
-      completed: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      dueDate: dueDate,
-    };
-    try {
-      if (editingTask) {
-        await updateTask(user.uid, editingTask.id, taskData);
-      } else {
-        await addTask(user.uid, taskData);
-      }
-      if (dueDate) {
-        await scheduleTaskNotification(taskData);
-      }
-      setIsDialogVisible(false);
-      setTaskTitle('');
-      setTaskDescription('');
-      setDueDate(new Date());
-      setEditingTask(null);
-    } catch (error) {
-      Alert.alert('Erro', 'Não foi possível salvar a tarefa.');
-    }
+const handleAddTask = async () => {
+  if (!taskTitle) return;
+
+  const taskData = {
+    title: taskTitle,
+    description: taskDescription,
+    completed: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    dueDate,
   };
+
+  try {
+    if (editingTask) {
+      await updateTask(user.uid, editingTask.id, taskData);
+    } else {
+      await addTask(user.uid, taskData);
+    }
+
+    if (dueDate) {
+      await scheduleTaskNotification(taskData);
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    // fecha o Dialog e reseta os campos **após tudo**
+    setIsDialogVisible(false);
+    setTaskTitle('');
+    setTaskDescription('');
+    setDueDate(new Date());
+    setEditingTask(null);
+  }
+};
 
   const handleEditTask = (task) => {
     setEditingTask(task);
@@ -90,14 +104,17 @@ export default function TasksScreen() {
       title={item.title}
       description={item.description}
       left={(props) => (
-        <List.Icon {...props} icon={item.completed ? 'check-circle' : 'circle-outline'} />
+        <List.Icon
+          {...props}
+          icon={item.completed ? 'check-circle' : 'circle-outline'}
+        />
       )}
       right={() => (
         <View style={styles.listItemRight}>
           <Button onPress={() => handleEditTask(item)} mode="text">
             Editar
           </Button>
-          <Button onPress={() => handleDeleteTask(item.id)} mode="text" color="red">
+          <Button onPress={() => handleDeleteTask(item.id)} mode="text" textColor="red">
             Excluir
           </Button>
         </View>
@@ -106,7 +123,7 @@ export default function TasksScreen() {
       style={styles.listItem(item.completed)}
     />
   );
-  
+
   const handleToggleLang = () => {
     const newLocale = locale === 'pt' ? 'en' : 'pt';
     setAppLocale(newLocale);
@@ -119,12 +136,22 @@ export default function TasksScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {isQuoteLoading && <ActivityIndicator style={styles.quoteLoading} animating={true} color={paperTheme.colors.primary} />}
+    <View style={[styles.container, { backgroundColor: paperTheme.colors.background }]}>
+      {isQuoteLoading && (
+        <ActivityIndicator
+          style={styles.quoteLoading}
+          animating={true}
+          color={paperTheme.colors.primary}
+        />
+      )}
       {!isQuoteLoading && !isQuoteError && quote && (
-        <View style={styles.quoteContainer}>
-          <Text style={styles.quoteText}>"{quote.text}"</Text>
-          <Text style={styles.quoteAuthor}>- {quote.author || 'Anônimo'}</Text>
+        <View style={[styles.quoteContainer, { backgroundColor: paperTheme.colors.surface }]}>
+          <Text style={[styles.quoteText, { color: paperTheme.colors.onBackground }]}>
+            "{quote.text}"
+          </Text>
+          <Text style={[styles.quoteAuthor, { color: paperTheme.colors.onBackground }]}>
+            - {quote.author || 'Anônimo'}
+          </Text>
         </View>
       )}
 
@@ -165,7 +192,9 @@ export default function TasksScreen() {
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => setIsDialogVisible(false)}>Cancelar</Button>
-            <Button onPress={handleAddTask}>{editingTask ? 'Salvar' : 'Adicionar'}</Button>
+            <Button onPress={handleAddTask}>
+              {editingTask ? 'Salvar' : 'Adicionar'}
+            </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -188,11 +217,9 @@ export default function TasksScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   quoteContainer: {
     padding: 15,
-    backgroundColor: '#e0e0e0',
     marginBottom: 10,
     borderRadius: 8,
     marginHorizontal: 10,

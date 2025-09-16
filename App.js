@@ -17,6 +17,7 @@ function MainApp() {
   return (
     <PaperProvider theme={paperTheme}>
       <AppNavigation />
+      <StatusBar />
     </PaperProvider>
   );
 }
@@ -29,7 +30,6 @@ export default function App() {
           <ThemeProvider>
             <I18nProvider>
               <MainApp />
-              <StatusBar />
             </I18nProvider>
           </ThemeProvider>
         </AuthProvider>

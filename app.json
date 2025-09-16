@@ -2,6 +2,7 @@
   "expo": {
     "name": "ListaTarefasPlus",
     "slug": "ListaTarefasPlus",
+    "scheme": "listadetarefasplus",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
