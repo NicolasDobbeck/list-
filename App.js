@@ -1,20 +1,39 @@
+// App.js
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { PaperProvider } from 'react-native-paper';
+import { AuthProvider } from './src/context/AuthContext';
+import { ThemeProvider, useTheme } from './src/context/ThemeContext';
+import { I18nProvider } from './src/context/I18nContext';
+import AppNavigation from './src/navigation/AppNavigation';
 
-export default function App() {
+const queryClient = new QueryClient();
+
+function MainApp() {
+  const { paperTheme } = useTheme();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <PaperProvider theme={paperTheme}>
+      <AppNavigation />
+    </PaperProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <I18nProvider>
+              <MainApp />
+              <StatusBar />
+            </I18nProvider>
+          </ThemeProvider>
+        </AuthProvider>
+      </SafeAreaProvider>
+    </QueryClientProvider>
+  );
+}
