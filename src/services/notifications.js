@@ -1,6 +1,7 @@
 import * as Notifications from 'expo-notifications';
-import { Platform } from 'react-native';
+import * as Permissions from 'expo-permissions';
 
+// Configura comportamento das notificações em foreground
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -9,20 +10,21 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export const scheduleTaskNotification = async (task) => {
-  const { status } = await Notifications.getPermissionsAsync();
-  if (status !== 'granted') {
-    await Notifications.requestPermissionsAsync();
-  }
+// Solicita permissão
+export async function requestPermissions() {
+  const { status } = await Notifications.requestPermissionsAsync();
+  return status === 'granted';
+}
 
-  const trigger = new Date(task.dueDate);
-  if (trigger.getTime() > Date.now()) {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Lembrete de Tarefa",
-        body: `Sua tarefa "${task.title}" está agendada para agora.`,
-      },
-      trigger,
-    });
-  }
-};
+// Agenda notificação local
+export async function scheduleTaskNotification(task) {
+  if (!task.dueDate) return;
+
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: `Tarefa: ${task.title}`,
+      body: task.description || 'Lembre-se da sua tarefa!',
+    },
+    trigger: task.dueDate, // Date object
+  });
+}
