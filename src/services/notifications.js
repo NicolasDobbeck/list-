@@ -1,5 +1,4 @@
 import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
 
 // Configura comportamento das notificações em foreground
 Notifications.setNotificationHandler({
@@ -10,7 +9,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// Solicita permissão
+// Solicita permissão para notificações
 export async function requestPermissions() {
   const { status } = await Notifications.requestPermissionsAsync();
   return status === 'granted';
