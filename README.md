@@ -1,5 +1,11 @@
 # 📝 TaskMaster App
 
+Integrantes:
++ [Nicolas Dobbeck Mendes RM: 557605](https://github.com/NicolasDobbeck)
++ [Thiago Henry Dias RM: 554522](https://github.com/lavithiluan)
++ [José Bezerra Bastos Neto RM: 559221](https://github.com/jjosebastos)
+
+
 Aplicativo de gerenciamento de tarefas com autenticação, sincronização em tempo real, temas claros/escuros, internacionalização e notificações locais.
 
 ---
@@ -37,33 +43,71 @@ Aplicativo de gerenciamento de tarefas com autenticação, sincronização em te
 
 ---
 
-## 📦 Estrutura de Dados das Tarefas
-
-| Campo          | Tipo      | Descrição                        |
-|----------------|-----------|----------------------------------|
-| id             | string    | Identificador único da tarefa    |
-| title          | string    | Título da tarefa                 |
-| description    | string    | Descrição detalhada da tarefa    |
-| dueDate        | timestamp | Data/hora para notificação       |
-| completed      | boolean   | Status de conclusão              |
-| createdAt      | timestamp | Data de criação                  |
-| updatedAt      | timestamp | Última atualização               |
-
----
-
 ## 🛠 Tecnologias e Bibliotecas
 
-- **Firebase**  
-  `@react-native-firebase/app`, `@react-native-firebase/auth`, `@react-native-firebase/firestore`
-- **Navegação**  
-  `@react-navigation/native`
-- **UI Components**  
-  `react-native-paper` ou `native-base`
-- **Internacionalização**  
-  `i18n-js` ou `react-i18next`
-- **Notificações**  
-  `expo-notifications` ou `notifee`
-- **Gerenciamento de Dados Externos**  
-  `@tanstack/react-query`
+O projeto utiliza as seguintes bibliotecas e ferramentas:
+
+### Firebase
+- `@react-native-firebase/app`
+- `@react-native-firebase/auth`
+- `@react-native-firebase/firestore`
+
+### Navegação
+- `@react-navigation/native`
+- `@react-navigation/native-stack`
+
+### UI Components
+- `react-native-paper`
+- `react-native-safe-area-context`
+- `react-native-screens`
+
+### Armazenamento Local
+- `@react-native-async-storage/async-storage`
+
+### Date/Time Picker
+- `@react-native-community/datetimepicker`
+- `react-native-modal-datetime-picker`
+
+### Internacionalização
+- `i18n-js`
+
+### Notificações
+- `expo-notifications`
+- `expo-web-browser` (para autenticação externa)
+
+### React & Expo
+- `react`, `react-dom`, `react-native`
+- `expo`, `expo-auth-session`, `expo-dev-client`, `expo-status-bar`
+
+### Gerenciamento de Dados Externos
+- `@tanstack/react-query`
+- `axios` (para consumo de APIs externas)
+
+  
+## Como Rodar o Projeto
+
+### Pré-requisitos
+
+- Node.js >= 18
+- Expo CLI
+- Conta Firebase configurada
+
+### Passos
+
+```bash
+# 1. Clone o repositório
+git clone https://github.com/NicolasDobbeck/list-.git
+cd list-
+
+# 2. Instale as dependências
+npm install
+# ou
+yarn install
+
+# 3. Configure o Firebase
+# - Configure Authentication (Email/Google) e Firestore
+
+# 4. Rode o app no modo desenvolvimento
+npx expo start
 
 
